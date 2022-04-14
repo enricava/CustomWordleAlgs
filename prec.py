@@ -1,9 +1,10 @@
 import numpy as np
 from tqdm import tqdm
 
-# Carga archivo de palabras en numpy array
 wordfile = 'allowed_words.txt'
 savefile = 'cross_patterns.npy'
+
+# Load savefile into numpy array
 words = np.loadtxt(wordfile, dtype = 'str')
 
 
