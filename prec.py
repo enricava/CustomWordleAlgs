@@ -13,6 +13,7 @@ words = np.loadtxt(wordfile, dtype = 'str')
 # 1 : yellow
 # 2 : green
 # Left is most significant trit
+# word2 is submitted word
 def pattern(word1, word2):
     result = 0
     used1 = [False for _ in range(5)]
@@ -43,7 +44,7 @@ for i in tqdm(range(words.size)):
     for j in range(words.size):
         p = pattern(words[i],words[j])
         matrix1[i,j] = p
-        matrix2[i,p] += 1
+        matrix2[j,p] += 1
 
 with open(savefile, 'wb') as f:
     np.save(f, matrix1)
