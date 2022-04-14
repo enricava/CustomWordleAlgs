@@ -9,4 +9,4 @@ This will generate and store two numpy matrices:
   matrix2[#word, pattern] := frequency of pattern given submitted word. For example purposes only
   
  ## allowed_word.txt
- All submittable wordle words. Extracted from 3b1b
+ All submittable wordle words.
