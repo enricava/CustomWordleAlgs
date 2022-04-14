@@ -2,11 +2,10 @@ import numpy as np
 from tqdm import tqdm
 
 wordfile = 'allowed_words.txt'
-savefile = 'cross_patterns_uint8.npy'
+savefile = 'datafile.npy'
 
 # Load allowed words into array
 words = np.loadtxt(wordfile, dtype = 'str')
-
 
 # Generates a wordle pattern from two words
 # Pattern representation is in ternary base
@@ -38,10 +37,14 @@ def pattern(word1, word2):
     return result
 
 # Generate patterns
-matrix = np.zeros(shape=(words.size,words.size), dtype=np.uint8)
+matrix1 = np.zeros(shape=(words.size,words.size), dtype=np.uint8)   # word x word : pattern
+matrix2 = np.zeros(shape=(words.size, 3**5), dtype=np.uint16)       # word x pattern : freq
 for i in tqdm(range(words.size)):
     for j in range(words.size):
-        matrix[i,j] = pattern(words[i],words[j])
+        p = pattern(words[i],words[j])
+        matrix1[i,j] = p
+        matrix2[i,p] += 1
 
 with open(savefile, 'wb') as f:
-    np.save(f, matrix)
+    np.save(f, matrix1)
+    np.save(f, matrix2)
