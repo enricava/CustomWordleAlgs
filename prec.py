@@ -2,9 +2,9 @@ import numpy as np
 from tqdm import tqdm
 
 wordfile = 'allowed_words.txt'
-savefile = 'cross_patterns.npy'
+savefile = 'cross_patterns_uint8.npy'
 
-# Load savefile into numpy array
+# Load allowed words into array
 words = np.loadtxt(wordfile, dtype = 'str')
 
 
@@ -38,7 +38,7 @@ def pattern(word1, word2):
     return result
 
 # Generate patterns
-matrix = np.zeros(shape=(words.size,words.size))
+matrix = np.zeros(shape=(words.size,words.size), dtype=np.uint8)
 for i in tqdm(range(words.size)):
     for j in range(words.size):
         matrix[i,j] = pattern(words[i],words[j])
