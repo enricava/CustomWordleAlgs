@@ -4,7 +4,7 @@
 Precomputes a file with ternary wordle patterns resulting after cross examining words from a .txt file using vectorization
 This will generate and store two numpy matrices:
 
-  matrix1[#word1, #word2] := pattern result after submitting word2 when solution is word1
+  matrix1[#word1, #word2] := pattern result after submitting word1 when solution is word2
   
   matrix2[#word] := word entropy
 
