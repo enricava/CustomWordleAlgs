@@ -5,13 +5,13 @@ from matplotlib import pyplot as plt
 
 wordfile = 'allowed_words.txt'
 savefile = 'datafile.npy'
+solutionfile = 'solutions.txt'
 
 # Load allowed words into array
 words1 = np.loadtxt(wordfile, dtype = 'str')
 words2 = words1
 
-# Generates pattern matrix using words1 as solutions and words2 as inputs
-
+# Generates pattern matrix using words1 as inputs and words2 as solutions
 list1 = np.array([[ord(c) for c in w] for w in words1], dtype=np.uint8)
 list2 = np.array([[ord(c) for c in w] for w in words2], dtype=np.uint8)
 
@@ -48,9 +48,9 @@ for i, j in tqdm(product(range(5), range(5))):
             equalities[:, :, i, k].flat[matches] = False
 
 print('Calculating entropies...')
-for col in tqdm(matrix.T):
+for i, col in tqdm(enumerate(matrix)):
     ps, counts = np.unique(col, return_counts=True)
-    entropies[col] = - np.dot(counts/l1, np.log2(counts/l1))
+    entropies[i] = - np.dot(counts/l1, np.log2(counts/l1))
 
 with open(savefile, 'wb') as f:
     np.save(f, matrix)
