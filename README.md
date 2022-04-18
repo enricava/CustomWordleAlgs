@@ -4,6 +4,13 @@
 2. Download and run `efficient_precomputation.py` in the same folder to generate `datafile.npy`.
 3. Download and run any of the simulations.
 
+# Requirements
+
+Python 3 with `tqdm` library for progress bars.
+
+To install `tqdm` open a command prompt window and type:
+`pip install tqdm`
+
 # About
 
  ### efficient_precomputation.py
