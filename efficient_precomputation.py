@@ -50,7 +50,7 @@ for i, j in tqdm(product(range(5), range(5))):
 print('Calculating entropies...')
 for col in tqdm(matrix.T):
     ps, counts = np.unique(col, return_counts=True)
-    entropies[col] = - np.dot(counts/len(ps), np.log2(counts/len(ps)))
+    entropies[col] = - np.dot(counts/l1, np.log2(counts/l1))
 
 with open(savefile, 'wb') as f:
     np.save(f, matrix)
