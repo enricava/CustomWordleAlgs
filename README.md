@@ -1,6 +1,6 @@
 # CustomWordleAlgs
 
-## prec.py
+## old_prec.py
 -- DO NOT USE ANY MORE, for precomputation use efficient_precomputation.py
 
 Precomputes a file with ternary wordle patterns resulting after cross examining words from a .txt file
