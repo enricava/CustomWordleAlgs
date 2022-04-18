@@ -1,5 +1,6 @@
 import random as rnd
 import numpy as np
+from matplotlib import pyplot as plt
 import json
 from tqdm import tqdm
 
@@ -196,16 +197,25 @@ def geneticAlgorithm(N, mutProb, solution):
 
     return attempts
 
+def simulate(word, iterations, N, mutationProb):
+    results = [0 for _ in range(8)]
+    for _ in tqdm(range(iterations)):
+        sol = geneticAlgorithm(N, mutationProb, word)
+        results[len(sol)-1] += 1
+    print(results)
+    score = 0
+    for i in range(len(results)):
+        score += (i+1)*results[i]
+    score /= iterations
+    print('Score = ' + str(score))
+    plt.title('Simulation results for the word ' + str(word))
+    plt.ylabel('Frequency')
+    plt.xlabel('Score')
+    plt.bar(range(1,9), results)
+    plt.savefig('simGene.png', dpi=1000, transparent=True)
+    plt.show()
 
-N = 100
-mutProb = 0.1
-attempts = 0
-iters = 100
-for i in range(iters):
-    sol = geneticAlgorithm(N, mutProb, 'merry')
-    print("Solution: " + str(sol))
-    attempts += len(sol)
-print("Average number of attempts = " + str(attempts/iters))
+simulate('merry', 50, 100, 0.1)
 
 """
 Problema:
@@ -217,7 +227,6 @@ Solucionar eso si es posible y mejores funciones fitness son las optimizaciones 
 se me ocurren
 
 Parece que entre 5 y 6 de media
-Alguna vez hace 4 y los casos que se va a más a simple vista se quitarían con lo
+Alguna vez hace 4 y los casos que se va a más a simple vista podrían quitarse con lo
 de las letras repetidas
 """   
-
