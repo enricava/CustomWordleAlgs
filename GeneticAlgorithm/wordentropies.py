@@ -14,7 +14,7 @@ solutions = np.loadtxt(solutionfile, dtype = 'str')
 # Load data matrices
 with open(savefile,'rb') as f:
     matrix=np.load(f)      # word x word : pattern
-    entropies=np.load(f)      # word x pattern : freq
+    entropies=np.load(f)      # word : entropy
 
 d = {}
 for i in tqdm(range(len(words))):
