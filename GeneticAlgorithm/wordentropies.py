@@ -14,24 +14,11 @@ solutions = np.loadtxt(solutionfile, dtype = 'str')
 # Load data matrices
 with open(savefile,'rb') as f:
     matrix=np.load(f)      # word x word : pattern
-    matrix2=np.load(f)      # word x pattern : freq
+    entropies=np.load(f)      # word x pattern : freq
 
-# Calculate the entropy of the words for the fitness function
-def safelog2(x):
-    if x <= 0: 
-        return 0
-    
-    return np.log2(x)
-
-def wordentropy(i):
-    e = 0
-    for f in matrix2[i]/len(words):
-        e -= f * safelog2(f)
-    return e
-    
-entropies = {}
+d = {}
 for i in tqdm(range(len(words))):
-    entropies[words[i]] = wordentropy(i)
+    d[words[i]] = entropies[i]
 
 with open('entropies.json', 'w') as f:
-    json.dump(entropies, f)
+    json.dump(d, f)
