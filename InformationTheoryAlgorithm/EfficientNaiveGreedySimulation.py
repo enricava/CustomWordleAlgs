@@ -6,13 +6,13 @@ from matplotlib import pyplot as plt
 
 wordfile = 'allowed_words.txt'
 savefile = 'datafile.npy'
-solutonfile = 'solutions.txt'
+solutionfile = 'solutions.txt'
 
 # Load allowed words into array
 words = np.loadtxt(wordfile, dtype = 'str')
-solutions = np.loadtxt(solutonfile, dtype = 'str')
+solutions = np.loadtxt(solutionfile, dtype = 'str')
 
-# Generates pattern matrix using words1 as solutions and words2 as inputs
+# Generates pattern matrix using words1 as inputs and words2 as solutions
 def pattern_matrix(words1, words2):
 
     list1 = np.array([[ord(c) for c in w] for w in words1], dtype=np.uint8)
@@ -53,10 +53,9 @@ def make_guess(wordlist):
     l = len(wordlist)
     maxe = -1
     best = -1
-    # Transposing array is not costly
-    for i,col in enumerate(patterns.T):
+    for i,w in enumerate(patterns):
         # List of distinct patterns and frequencies
-        ps, counts = np.unique(col, return_counts=True)
+        ps, counts = np.unique(w, return_counts=True)
         e = - np.dot(counts/l, np.log2(counts/l))
         if e > maxe:
             maxe = e
@@ -68,11 +67,11 @@ def play(solution, allowed=words, starter='tares'):
     #answers = [starter]
     next = starter
     for attempt in range(9):
-        pattern = pattern_matrix([solution], [next])[0,0]
+        pattern = pattern_matrix([next], [solution])[0,0]
         if pattern == 242:
             break
 
-        remaining_patterns = pattern_matrix(remaining_words, [next])
+        remaining_patterns = pattern_matrix([next], remaining_words)
         remaining_words = remaining_words[remaining_patterns.flatten() == pattern]
         i, next = make_guess(remaining_words)
         remaining_words = np.delete(remaining_words, i)
@@ -94,7 +93,8 @@ def simulations(starter='tares'):
     plt.ylabel('Frequency')
     plt.xlabel('Score')
     plt.bar(range(1,10), results)
-    plt.savefig('sim5.png', dpi=1000, transparent=True)
+    plt.savefig('sim.png', dpi=1000, transparent=True)
     plt.show()
 
 simulations('tares')
+#print(play('merry'))
