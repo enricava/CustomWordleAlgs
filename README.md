@@ -11,5 +11,5 @@ This will generate and store two numpy matrices:
  ## allowed_words.txt
  All submittable wordle words. Extracted from https://github.com/3b1b/videos/tree/master/_2022
  
- ## solution.txt
+ ## solutions.txt
  All possivle wordle solutions. Extracted from https://github.com/3b1b/videos/tree/master/_2022
