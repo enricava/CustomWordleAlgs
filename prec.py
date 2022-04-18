@@ -1,3 +1,7 @@
+#
+#   DEPRECATED : DO NOT USE THIS FILE TO PRECOMPUTE PATTERNS / ENTROPIES 
+#
+
 import numpy as np
 from tqdm import tqdm
 
