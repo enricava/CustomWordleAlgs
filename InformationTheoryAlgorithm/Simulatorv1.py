@@ -4,6 +4,8 @@ from itertools import product
 from matplotlib import pyplot as plt
 from functools import cache
 from os.path import isfile
+from os.path import isdir
+from os import mkdir
 
 wordfile = 'allowed_words.txt'
 solutionfile = 'solutions.txt'
@@ -15,6 +17,9 @@ present = np.array([isfile(f) for f in filenames])
 if not present.all():
     [print('Missing', filenames[i]) for i in range(len(filenames)) if not present[i]]
     exit()
+
+if not isdir('simulations'):
+    mkdir('simulations')
 
 # Load allowed words into array
 words = np.loadtxt(wordfile, dtype = 'str')
@@ -146,11 +151,12 @@ def simulations(mode, setstarter = None):
 
     print('Results =',results)
     print('Score =', score)
-    plt.title('Simulations results '+ mode + starter)
+    plt.title('Simulation results '+ mode + starter)
+    plt.suptitle(str(results))
     plt.ylabel('Frequency')
     plt.xlabel('Score')
     plt.bar(range(1,10), results)
-    plt.savefig(mode + starter +'.png', dpi=1000, transparent=True)
+    plt.savefig('./simulations/' + mode + starter +'.png', dpi=1000, transparent=True)
     plt.show()
 
 while True:
