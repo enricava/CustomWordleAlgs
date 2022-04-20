@@ -83,14 +83,14 @@ def selection(population, guessed, amber):
 # With the information that we have from previous
 # words chosen as inputs for the game, we 
 # generate words that match that information
-def crossover(guessed, amber, gray, rejects):
+def crossover(guessed, amber, gray, attempts):
     k = rnd.randint(0,len(words)-1)
     found = False
     while not found:
         found = True
         word = words[k]
         # word already used
-        if word in rejects:
+        if word in attempts:
             found = False
         else:
             # matches the green letters
@@ -154,7 +154,6 @@ def attempt(best, sol, guessed, amber, gray):
 # solution: solution for the game
 def geneticAlgorithm(N, mutProb, solution):    
     guessed = ['-','-','-','-','-']
-    rejects = set()
     amber = set()
     gray = set()
 
@@ -169,11 +168,10 @@ def geneticAlgorithm(N, mutProb, solution):
         if not '-' in guessed:
             found = True
             break
-        rejects.add(best)
        
         nextGen = []
         for _ in range(N):
-            child = crossover(guessed, amber, gray, rejects)
+            child = crossover(guessed, amber, gray, attempts)
             mutation(child, mutProb)
             nextGen.append(child)
         population = nextGen
