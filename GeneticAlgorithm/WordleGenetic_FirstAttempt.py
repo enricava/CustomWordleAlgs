@@ -10,6 +10,7 @@ datafile = 'datafile.npy'
 # Load allowed words into array
 words = np.loadtxt(wordfile, dtype = 'str')
 solutions = np.loadtxt(solutionfile, dtype = 'str')
+word_dict = {words[i]:i for i in range(words.size)}
 
 # Load data matrices
 with open(datafile,'rb') as f:
@@ -17,8 +18,11 @@ with open(datafile,'rb') as f:
     entropies=np.load(f)      # word : entropy
 
 # Get word position in 'words'
-def get_word_position(word): # O(logn)
-    return words.searchsorted(word)
+def get_word_position(word):
+    if word in word_dict:
+        return word_dict[word]
+    else:
+        return -1
 
 # Get pattern between words as list
 # Pattern representation is in ternary base
@@ -44,6 +48,7 @@ def get_entropy(word_position):
 #                    GENETIC ALGORITHM
 #--------------------------------------------------------------
 
+# Generate the initial population: N random individuals (words)
 def init(N):
     gen = set()
     while len(gen) != N:
@@ -51,6 +56,8 @@ def init(N):
         gen.add(words[index])
     return list(gen)
 
+# Fitness function: The more consistent the word is with the
+# information that we have about the solution, the better it is
 def fitness(word, best, pattern, gray):
     f = get_entropy(get_word_position(word))
     if best != '-----': # Not the first attempt
@@ -63,6 +70,8 @@ def fitness(word, best, pattern, gray):
                 f -= 2
     return f
 
+# Selection Operator: Returns the best individual of the population,
+# which will be used as an attempt for guessing the solution
 def selection(population, best, pattern, gray):
     bestfit = 0
     for w in population:
@@ -72,6 +81,10 @@ def selection(population, best, pattern, gray):
             bestword = w
     return bestword
 
+# Mutation Operator: Changes a letter of a word, making sure the result
+# is a real word accepted by Wordle. The variable maxTries is used for
+# same cases in which changing any letter of the word results in a 
+# non-existing word
 def mutation(child, maxTries = 100):
     found = False
     tries = 0    
@@ -85,13 +98,15 @@ def mutation(child, maxTries = 100):
             else:
                 newchild += child[j]
         k = get_word_position(newchild)
-        found = k < len(words) and newchild != child and words[k] == newchild
+        found = k > 0 and k < len(words) and newchild != child and words[k] == newchild
         tries += 1
     if found:
         return newchild
     else:
         return child
 
+# Crossover Operator: Return a word that is consistent with the
+# current information that we have about the solution
 def crossover(guessed, colors, attempts):
     found = False
     while not found:
@@ -107,6 +122,8 @@ def crossover(guessed, colors, attempts):
                 found = found and (not guessed[i] in word)
     return word
 
+# Simulates an attempt os submitting a word to the game to guess the
+# solution and updates all the information we have about it
 def attempt(best, solution, guessed, colors, gray):
     newpattern = get_pattern(get_word_position(best), get_word_position(solution))
     for i in range(5):
@@ -152,11 +169,11 @@ def geneticAlgorithm(N, mutProb, solution):
 
 # Solves Wordle 'iterations' times with 'word' as the solution
 def simulate(word, iterations, N, mutationProb):
-    results = [0 for _ in range(8)]
+    results = [0 for _ in range(15)]
     for _ in tqdm(range(iterations)):
         sol = geneticAlgorithm(N, mutationProb, word)
         results[len(sol)-1] += 1
-    print(results)
+    print('Results: ' + str(results))
     score = 0
     for i in range(len(results)):
         score += (i+1)*results[i]
@@ -165,9 +182,8 @@ def simulate(word, iterations, N, mutationProb):
     plt.title('Simulation results for the word ' + str(word))
     plt.ylabel('Frequency')
     plt.xlabel('Score')
-    plt.bar(range(1,9), results)
+    plt.bar(range(1,16), results)
     plt.savefig('simGene.png', dpi=1000, transparent=True)
     plt.show()
 
-
-simulate('merry', 10, 250, 0.1)
+simulate('merry', 1, 250, 0.1)
