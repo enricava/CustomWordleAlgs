@@ -186,4 +186,4 @@ def simulate(word, iterations, N, mutationProb):
     plt.savefig('simGene.png', dpi=1000, transparent=True)
     plt.show()
 
-simulate('merry', 1, 250, 0.1)
+simulate('merry', 1, 50, 0.1)
