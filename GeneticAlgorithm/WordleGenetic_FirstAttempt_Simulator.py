@@ -201,7 +201,7 @@ while True:
         else:
             sol = solutions[rnd.randint(0,len(solutions)-1)]
         print('Algorithm playing the game to find the word \'' + sol + '\'...')
-        attempts = geneticAlgorithm(250, 0.1, sol)
+        attempts = geneticAlgorithm(50, 0.1, sol)
         print('Attempts: ' + str(attempts))
 
         ans = input('Stop simulations? y/n\n')
@@ -221,7 +221,7 @@ while True:
         else:
             iter = int(sims)
         print('Making ' + str(iter) + ' simulations to find the word \'' + sol + '\'...')
-        simulate(sol, iter , 250, 0.2)
+        simulate(sol, iter , 50, 0.1)
 
         ans = input('Stop simulations? y/n\n')
         if ans == 'y':
