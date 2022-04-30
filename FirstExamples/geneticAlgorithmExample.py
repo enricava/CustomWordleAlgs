@@ -1,4 +1,5 @@
 import random as rnd
+import numpy as np
 
 def fitness(c):
     f = 0
@@ -14,44 +15,27 @@ def init(N):
     return gen
 
 def getFitness(population):
-    fitPopulation = []
     totalFitness = 0
-    for c in population:
-        totalFitness += fitness(c)
-        fitPopulation.append([fitness(c),c])
-    return totalFitness, fitPopulation
+    individuals = []
+    for w in population:
+        f = fitness(w)
+        totalFitness += f
+        individuals.append([w,f])
+    return totalFitness, individuals
 
 def selection(population):
-    totalFitness, gen = getFitness(population)
-    weights = [[gen[0][1], gen[0][0]/totalFitness, gen[0][0]/totalFitness]]
-    for i in range(1,len(gen)):
-        chromosome = gen[i][1]
-        p_i = gen[i][0]/totalFitness
-        q_i = p_i + weights[i-1][2]
-        weights.append([chromosome, p_i, q_i])
-    
-    # Mejorar búsquedas a log n
-    r = rnd.uniform(0, 1)
-    if r <= weights[0][2]:
-        parent1 = weights[0][0]
-    else:
-        for i in range(1,len(weights)):
-            if r <= weights[i][2]:
-                parent1 = weights[i][0]
-                break
-            
-    parent2 = parent1
-    while parent2 == parent1:
-        r = rnd.uniform(0, 1)
-        if r <= weights[0][2]:
-            parent2 = weights[0][0]
-        else:
-            for i in range(1,len(weights)):
-                if r <= weights[i][2]:
-                    parent2 = weights[i][0]
-                    break
+    totalFitness, individuals = getFitness(population)
+        
+    probs = np.empty(len(individuals))
+    probs[0] = individuals[0][1]/totalFitness
+    for i in range(1,len(individuals)):
+        probs[i] = probs[i-1] + individuals[i][1]/totalFitness
 
-    return parent1, parent2
+    r1, r2 = rnd.uniform(0,1), rnd.uniform(0,1)
+    p1 = np.searchsorted(probs,r1)
+    p2 = np.searchsorted(probs,r2)
+
+    return individuals[p1][0], individuals[p2][0]
 
 def crossover(parent1, parent2):
     l = len(parent1)
@@ -74,7 +58,6 @@ def bestIndividual(population):
 
 def geneticAlgorithm(N, maxNG, crossProb, mutProb):
     population = init(N)
-    print(population)
     numberGens = 0
     while numberGens != maxNG:
         nextGen = []
@@ -90,9 +73,7 @@ def geneticAlgorithm(N, maxNG, crossProb, mutProb):
             nextGen += [child1, child2]
         population = nextGen
         numberGens += 1
-    print(population)
     return bestIndividual(population)
-
 
 N = 15
 maxNG = 50
