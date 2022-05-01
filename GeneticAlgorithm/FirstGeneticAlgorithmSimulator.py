@@ -183,7 +183,7 @@ def simulate(word, iterations, N, mutationProb):
     plt.ylabel('Frequency')
     plt.xlabel('Score')
     plt.bar(range(1,16), results)
-    plt.savefig('simGene.png', dpi=1000, transparent=True)
+    plt.savefig('simGenetic.png', dpi=1000, transparent=True)
     plt.show()
 
 #--------------------------------------------------------------
