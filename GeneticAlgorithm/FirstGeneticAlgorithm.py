@@ -167,23 +167,4 @@ def geneticAlgorithm(N, mutProb, solution):
 
     return attempts
 
-# Solves Wordle 'iterations' times with 'word' as the solution
-def simulate(word, iterations, N, mutationProb):
-    results = [0 for _ in range(15)]
-    for _ in tqdm(range(iterations)):
-        sol = geneticAlgorithm(N, mutationProb, word)
-        results[len(sol)-1] += 1
-    print('Results: ' + str(results))
-    score = 0
-    for i in range(len(results)):
-        score += (i+1)*results[i]
-    score /= iterations
-    print('Score = ' + str(score))
-    plt.title('Simulation results for the word ' + str(word))
-    plt.ylabel('Frequency')
-    plt.xlabel('Score')
-    plt.bar(range(1,16), results)
-    plt.savefig('simGene.png', dpi=1000, transparent=True)
-    plt.show()
-
-simulate('merry', 1, 50, 0.1)
+print(geneticAlgorithm(100, 0.1, 'merry'))
