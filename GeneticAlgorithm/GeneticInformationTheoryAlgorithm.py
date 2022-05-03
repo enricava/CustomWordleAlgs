@@ -112,20 +112,15 @@ def crossover(remaining_words):
 # same cases in which changing any letter of the word results in a 
 # non-existing word
 def mutation(child, maxTries = 100):
-    w = words[child]
     found = False
     tries = 0    
     while not found and tries < maxTries:
-        newchild = ""
+        w = list(words[child])
         i = rnd.randint(0,4)
-        l = chr(rnd.randrange(ord('a'), ord('z')))
-        for j in range(5):
-            if j == i:
-                newchild += l
-            else:
-                newchild += w[j]
-        k = get_word_position(newchild)
-        found = k > 0 and k < len(words) and newchild != w and words[k] == newchild
+        w[i] = chr(rnd.randrange(ord('a'), ord('z')))
+        new_word = ''.join(map(str,w))
+        k = get_word_position(new_word)
+        found = k > 0 and k < len(words) and words[k] == new_word and new_word != words[child]
         tries += 1
     if found:
         return k
