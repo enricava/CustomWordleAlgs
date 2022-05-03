@@ -80,6 +80,18 @@ def init(N):
         gen.append(index)
     return gen
 
+# Generate the initial population with the N words with the most entropy
+def bestNwords(N):
+    w = []
+    for i in range(len(words)):
+        w.append((entropies[i],i))
+    sortw = sorted(w)
+
+    best = []
+    for (_, word) in sortw[-N:]:
+        best.append(word)
+    return best
+
 # Fitness function
 def fitness(word):
     return entropies[word] * word_priority[word]
@@ -133,7 +145,8 @@ def mutation(child, maxTries = 100):
 # solution: solution for the game
 def geneticAlgorithm(N, mutProb, solution): 
 
-    population = init(N)
+    #population = init(N)
+    population = bestNwords(N)
     attempts = []
     remaining_words = words
 
@@ -147,7 +160,7 @@ def geneticAlgorithm(N, mutProb, solution):
         remaining_patterns = pattern_matrix(tuple([words[best]]), tuple(remaining_words))
         remaining_words = remaining_words[remaining_patterns.flatten() == pattern]
         nextGen = []
-        for i in range(N):
+        for _ in range(N):
             child = crossover(remaining_words)
             r = rnd.uniform(0,1)
             if r < mutProb:
@@ -202,7 +215,7 @@ def simulation(N, mutationProb):
 while True:
     mode = input('Simulate all words [0] or Simulate a word several times [1]\n')
     if mode == '0':
-        simulation(100, 0.1)
+        simulation(100, 0.3)
 
         ans = input('Stop simulations? y/n\n')
         if ans == 'y':
@@ -221,7 +234,7 @@ while True:
         else:
             iter = int(sims)
         print('Making ' + str(iter) + ' simulations to find the word \'' + sol + '\'...')
-        simulate(sol, iter, 50, 0.1)
+        simulate(sol, iter, 100, 0.1)
 
         ans = input('Stop simulations? y/n\n')
         if ans == 'y':
