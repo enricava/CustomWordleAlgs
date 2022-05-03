@@ -50,58 +50,56 @@ def get_entropy(word_position):
 
 # Generate the initial population: N random individuals (words)
 def init(N):
-    gen = set()
+    gen = []
     while len(gen) != N:
         index = rnd.randrange(len(words))
-        gen.add(words[index])
-    return list(gen)
+        gen.append(words[index])
+    return gen
 
 # Fitness function: The more consistent the word is with the
 # information that we have about the solution, the better it is
-def fitness(word, best, pattern, gray):
-    f = get_entropy(get_word_position(word))
-    if best != '-----': # Not the first attempt
+def fitness(w, guessed, pattern, gray):
+    f = get_entropy(get_word_position(w))
+    if guessed != '-----': # No information
         for i in range(5):
-            if pattern[i] == 2 and best[i] == word[i]:
+            if pattern[i] == 2 and guessed[i] == w[i]:
                 f += 5
-            elif pattern[i] == 1 and best[i] != word[i] and best[i] in word:
+            elif pattern[i] == 1 and guessed[i] != w[i] and guessed[i] in w:
                 f += 2
-            if word[i] in gray:
+            if w[i] in gray:
                 f -= 2
     return f
 
 # Selection Operator: Returns the best individual of the population,
 # which will be used as an attempt for guessing the solution
-def selection(population, best, pattern, gray):
-    bestfit = 0
-    for w in population:
-        fit = fitness(w,best, pattern, gray)
-        if fit > bestfit:
+def selection(population, guessed, pattern, gray):
+    bestfit = fitness(population[0],guessed, pattern, gray)
+    bestword = population[0]
+    for i in range(1,len(population)):
+        fit = fitness(population[i],guessed, pattern, gray)
+        if fit >= bestfit:
             bestfit = fit
-            bestword = w
+            bestword = population[i]
     return bestword
 
 # Mutation Operator: Changes a letter of a word, making sure the result
 # is a real word accepted by Wordle. The variable maxTries is used for
 # same cases in which changing any letter of the word results in a 
 # non-existing word
-def mutation(child, maxTries = 100):
+def mutation(child, attempts, maxTries = 100):
     found = False
     tries = 0    
     while not found and tries < maxTries:
-        newchild = ""
+        w = list(child)
         i = rnd.randint(0,4)
-        l = chr(rnd.randrange(ord('a'), ord('z')))
-        for j in range(5):
-            if j == i:
-                newchild += l
-            else:
-                newchild += child[j]
-        k = get_word_position(newchild)
-        found = k > 0 and k < len(words) and newchild != child and words[k] == newchild
+        w[i] = chr(rnd.randrange(ord('a'), ord('z')))
+        new_word = ''.join(map(str,w))
+        k = get_word_position(new_word)
+        found = k > 0 and k < len(words) and words[k] == new_word and new_word != child
+        found = found and not new_word in attempts
         tries += 1
     if found:
-        return newchild
+        return words[k]
     else:
         return child
 
@@ -112,14 +110,13 @@ def crossover(guessed, colors, attempts):
     while not found:
         k = rnd.randint(0,len(words)-1)
         word = words[k]
-        found = not word in attempts
-        for i in range(5):
-            if colors[i] == 2:
-                found = found and word[i] == guessed[i]
-            elif colors[i] == 1:
-                found = found and (word[i] != guessed[i] and guessed[i] in word)
-            else:
-                found = found and (not guessed[i] in word)
+        if not word in attempts:
+            found = True
+            for i in range(5):
+                if colors[i] == 2:
+                    found = found and word[i] == guessed[i]
+                elif colors[i] == 1:
+                    found = found and (word[i] != guessed[i] and guessed[i] in word)
     return word
 
 # Simulates an attempt os submitting a word to the game to guess the
@@ -161,10 +158,10 @@ def geneticAlgorithm(N, mutProb, solution):
             child = crossover(guessed, colors, attempts)
             r = rnd.uniform(0,1)
             if r < mutProb:
-                child = mutation(child)
+                child = mutation(child, attempts)
             nextGen.append(child)
         population = nextGen
 
     return attempts
 
-print(geneticAlgorithm(100, 0.1, 'merry'))
+print(geneticAlgorithm(50, 0.1, 'merry'))
