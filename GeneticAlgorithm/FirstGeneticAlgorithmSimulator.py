@@ -50,23 +50,23 @@ def get_entropy(word_position):
 
 # Generate the initial population: N random individuals (words)
 def init(N):
-    gen = set()
+    gen = []
     while len(gen) != N:
         index = rnd.randrange(len(words))
-        gen.add(words[index])
-    return list(gen)
+        gen.append(words[index])
+    return gen
 
 # Fitness function: The more consistent the word is with the
 # information that we have about the solution, the better it is
-def fitness(word, best, pattern, gray):
-    f = get_entropy(get_word_position(word))
-    if best != '-----': # Not the first attempt
+def fitness(w, guessed, pattern, gray):
+    f = get_entropy(get_word_position(w))
+    if guessed != '-----': # No information
         for i in range(5):
-            if pattern[i] == 2 and best[i] == word[i]:
+            if pattern[i] == 2 and guessed[i] == w[i]:
                 f += 5
-            elif pattern[i] == 1 and best[i] != word[i] and best[i] in word:
+            elif pattern[i] == 1 and guessed[i] != w[i] and guessed[i] in w:
                 f += 2
-            if word[i] in gray:
+            if w[i] in gray:
                 f -= 2
     return f
 
@@ -85,23 +85,20 @@ def selection(population, best, pattern, gray):
 # is a real word accepted by Wordle. The variable maxTries is used for
 # same cases in which changing any letter of the word results in a 
 # non-existing word
-def mutation(child, maxTries = 100):
+def mutation(child, attempts, maxTries = 100):
     found = False
     tries = 0    
     while not found and tries < maxTries:
-        newchild = ""
+        w = list(child)
         i = rnd.randint(0,4)
-        l = chr(rnd.randrange(ord('a'), ord('z')))
-        for j in range(5):
-            if j == i:
-                newchild += l
-            else:
-                newchild += child[j]
-        k = get_word_position(newchild)
-        found = k > 0 and k < len(words) and newchild != child and words[k] == newchild
+        w[i] = chr(rnd.randrange(ord('a'), ord('z')))
+        new_word = ''.join(map(str,w))
+        k = get_word_position(new_word)
+        found = k > 0 and k < len(words) and words[k] == new_word and new_word != child
+        found = found and not new_word in attempts
         tries += 1
     if found:
-        return newchild
+        return words[k]
     else:
         return child
 
@@ -118,8 +115,6 @@ def crossover(guessed, colors, attempts):
                 found = found and word[i] == guessed[i]
             elif colors[i] == 1:
                 found = found and (word[i] != guessed[i] and guessed[i] in word)
-            else:
-                found = found and (not guessed[i] in word)
     return word
 
 # Simulates an attempt os submitting a word to the game to guess the
@@ -161,7 +156,7 @@ def geneticAlgorithm(N, mutProb, solution):
             child = crossover(guessed, colors, attempts)
             r = rnd.uniform(0,1)
             if r < mutProb:
-                child = mutation(child)
+                child = mutation(child, attempts)
             nextGen.append(child)
         population = nextGen
 
@@ -183,7 +178,42 @@ def simulate(word, iterations, N, mutationProb):
     plt.ylabel('Frequency')
     plt.xlabel('Score')
     plt.bar(range(1,16), results)
-    plt.savefig('simGenetic.png', dpi=1000, transparent=True)
+    plt.savefig('simFirstGenetic.png', dpi=1000, transparent=True)
+    plt.show()
+
+#--------------------------------------------------------------
+#               SIMULATION OF ALL THE WORDS
+#--------------------------------------------------------------
+# Takes around 1h20min to simulate all words
+def simulation(N, mutationProb):
+    results = [0 for _ in range(15)]
+    extratries = 0
+    maxtries = 0
+    extrawords= 0
+    for w in tqdm(solutions):
+        sol = geneticAlgorithm(N, mutationProb, w)
+        # Words with more than 15 tries
+        if len(sol) > 15:
+            extratries += len(sol)
+            extrawords += 1
+            if len(sol) > maxtries:
+                maxtries = len(sol)
+        else:
+            results[len(sol)-1] += 1
+    print('Results: ' + str(results))
+    score = 0
+    for i in range(len(results)):
+        score += (i+1)*results[i]
+    score += extratries
+    score /= len(solutions)
+    print('Average Score = ' + str(score))
+    print('Max number of tries = ' + str(maxtries))
+    print('Number of words with more than 15 tries = ' + str(extrawords))
+    plt.title('Simulations results')
+    plt.ylabel('Frequency')
+    plt.xlabel('Score')
+    plt.bar(range(1,16), results)
+    plt.savefig('simFirstGenetic.png', dpi=1000, transparent=True)
     plt.show()
 
 #--------------------------------------------------------------
