@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+# Uses old precalculation
 wordfile = 'allowed_words.txt'
 savefile = 'datafile.npy'
 words = np.loadtxt(wordfile, dtype = 'str')
