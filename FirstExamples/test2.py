@@ -3,6 +3,7 @@ from tqdm import tqdm
 import random
 from matplotlib import pyplot as plt
 
+# Uses old precalculation
 wordfile = 'allowed_words.txt'
 solutionfile = 'solutions.txt'
 savefile = 'datafile.npy'
