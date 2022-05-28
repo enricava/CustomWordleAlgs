@@ -1,5 +1,6 @@
 import numpy as np
 
+# Uses old precalculation
 wordfile = 'allowed_words.txt'
 savefile = 'datafile.npy'
 words = np.loadtxt(wordfile, dtype = 'str')
