@@ -166,7 +166,7 @@ def simulations(mode, setstarter = None):
 
     print('Results =',results)
     print('Score =', score)
-    plt.title('Simulation results '+ mode + starter)
+    plt.title('Simulation results '+ mode + ' ' + starter)
     plt.suptitle(str(results) + ' ' + str(score))
     plt.ylabel('Frequency')
     plt.xlabel('Score')
