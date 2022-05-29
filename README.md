@@ -1,4 +1,4 @@
-# How to run the Information Theory simulations:
+# How to run the simulations:
 
 1. Download `allowed_words.txt` and `solutions.txt`.
 2. Download and run `efficient_precomputation.py` in the same folder to generate `datafile.npy`.
